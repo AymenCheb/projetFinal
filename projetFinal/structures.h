@@ -7,18 +7,22 @@
 
 class deplacable{
 	virtual void afficher() = 0;
-	virtual std::pair<int, int>* trouverChemin(std::pair<int, int> destination) = 0; // Retourne un chemin si possible
-	virtual void demanderMouvement(std::pair<int, int> destination) = 0; // Demande un mouvement
+	virtual std::pair<int, int>* trouverChemin(const std::pair<int, int> destination) = 0; // Retourne un chemin si possible
+	virtual void demanderMouvement(const std::pair<int, int> destination) = 0; // Demande un mouvement
 };
-class piece {
+class piece: private deplacable {
 private:
 	std::string nature_;
 	std::string couleur_;
 public:
 	piece();
 	piece(std::string nature);
-	void afficherNature();
+	void afficher() override;
+	std::pair<int, int>* trouverChemin(const std::pair<int, int> destination) override;
+	void demanderMouvement(const std::pair<int, int> destination) override;
 };
+
+
 class Echiquier {
 private:
 	std::unique_ptr<piece> tableau_[8][8]; // Géneration d'un échiquier de 8x8 

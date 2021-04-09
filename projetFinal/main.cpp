@@ -5,13 +5,22 @@
 #include "structures.h"
 using namespace std;
 
+std::pair<int, int>* piece::trouverChemin(const std::pair<int, int> destination) {
+	std::pair<int, int> retour;
+	retour.first = 0;
+	retour.second = 0;
+	return &retour;
+}
+void piece::demanderMouvement(const std::pair<int, int> destination) {
+	cout << "La case est vide, il n'y a rien à déplacer";
+}
 piece::piece() {
 	nature_ = "X";
 }
 piece::piece(string nature) {
 	nature_ = nature;
 }
-void piece::afficherNature() {
+void piece::afficher() {
 	cout << nature_ << " ";
 }
 Echiquier::Echiquier() {
@@ -36,7 +45,7 @@ void Echiquier::afficherEchiquier() {
 	{
 		for (int j = 0; j < 8; j++)
 		{
-			tableau_[i][j].get()->afficherNature();
+			tableau_[i][j].get()->afficher();
 		}
 		cout << '\n';
 	}
@@ -48,6 +57,7 @@ int main() {
 	Echiquier echiquier;
 	echiquier.afficherEchiquier();
 	cout << sepratation;
+	cout << '\n';
 	// Test d'un changement de case 
 	pair<int, int> nouvelleCoordonnees;
 	nouvelleCoordonnees.first = 0;
