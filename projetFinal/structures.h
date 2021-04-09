@@ -8,7 +8,7 @@
 class deplacable{
 	virtual void afficher() = 0;
 	virtual std::pair<int, int>* trouverChemin(const std::pair<int, int> destination) = 0; // Retourne un chemin si possible
-	virtual void demanderMouvement(const std::pair<int, int> destination) = 0; // Demande un mouvement
+	virtual bool demanderMouvement(const std::pair<int, int> destination) = 0; // Demande un mouvement
 };
 class piece: private deplacable {
 private:
@@ -19,7 +19,7 @@ public:
 	piece(std::string nature);
 	void afficher() override;
 	std::pair<int, int>* trouverChemin(const std::pair<int, int> destination) override;
-	void demanderMouvement(const std::pair<int, int> destination) override;
+	bool demanderMouvement(const std::pair<int, int> destination) override;
 };
 
 
@@ -30,6 +30,7 @@ public:
 	Echiquier();
 	void modifierCase(const std::pair<int, int> coordonnees, const piece remplacement);
 	void viderCase(const std::pair<int, int> coordonnees);
+	void deplacerPiece(const std::pair<int, int> coordonneesInitiales, const std::pair<int, int> coordonneesDestination);
 	bool verifierLegaliteMouvement(const std::pair<int, int> chemin[]);
 	void executerMouvement(const std::pair<int, int> chemin[]);
 	void afficherEchiquier();
