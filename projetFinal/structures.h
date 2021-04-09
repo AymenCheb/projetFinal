@@ -20,6 +20,7 @@ public:
 	void afficher() override;
 	std::pair<int, int>* trouverChemin(const std::pair<int, int> destination) override;
 	bool demanderMouvement(const std::pair<int, int> destination) override;
+	friend class Echiquier;
 };
 
 
@@ -31,8 +32,7 @@ public:
 	void modifierCase(const std::pair<int, int> coordonnees, const piece remplacement);
 	void viderCase(const std::pair<int, int> coordonnees);
 	void deplacerPiece(const std::pair<int, int> coordonneesInitiales, const std::pair<int, int> coordonneesDestination);
-	bool verifierLegaliteMouvement(const std::pair<int, int> chemin[]);
-	void executerMouvement(const std::pair<int, int> chemin[]);
+	bool verifierLegaliteMouvement(const std::pair<int, int> chemin[], const std::pair<int, int> destination);
 	void afficherEchiquier();
 	
 	

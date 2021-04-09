@@ -56,13 +56,31 @@ void Echiquier::deplacerPiece(const std::pair<int, int> coordonneesInitiales, co
 	if (mouvementPossible)
 	{
 		std::pair<int, int>* chemin = tableau_[coordonneesInitiales.first][coordonneesInitiales.second].get()->trouverChemin(coordonneesDestination);
-		/*bool mouvementLegal = verifierLegaliteMouvement(chemin);
+		bool mouvementLegal = verifierLegaliteMouvement(chemin, coordonneesDestination);
 		if (mouvementLegal) {
 			modifierCase(coordonneesDestination, *tableau_[coordonneesInitiales.first][coordonneesInitiales.second].get());
 			viderCase(coordonneesInitiales);
-		}*/
+		}
 	}
 	else cout << "Mouvement impossible " << endl;
+}
+
+bool Echiquier::verifierLegaliteMouvement(const std::pair<int, int> chemin[], const std::pair<int, int> destination) {
+	int etapeChemin = 0;
+	pair<int, int> prochaineCase = chemin[etapeChemin];
+	do
+	{	
+		// Cette boucle Do While s'assure de la legalite du chemin en testant divers règles:
+		etapeChemin++;
+		prochaineCase = chemin[etapeChemin];
+		// Note: On cherche la prochaine case au début de la boucle pour pouvoir effectuer des tests sur la case finale si besoin est
+		// Si il y a une piece sur le chemin, autre que la case finale, le mouvement est illegal
+		if (tableau_[prochaineCase.first][prochaineCase.second].get()->nature_ != "X" and prochaineCase != destination) {
+			cout << "Il y a une pièce sur le chemin voulu autre que sur la case finale: Mouvement illegal!" << endl;
+			return false;
+		}
+	} while (prochaineCase != destination); // Tant que la destination finale n'a pas été atteinte, on continue de suivre le chemin
+	return true; // Si aucun des tests n'a échoué, le mouvement est jugé légal 
 }
 int main() {
 	string sepratation = " \n --------------------------------------------------------------- \n";
