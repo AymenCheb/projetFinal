@@ -4,7 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <memory>
-
+using namespace std;
 
 class deplacable{
 	virtual void afficher() = 0;
@@ -42,3 +42,59 @@ public:
 	
 	
 }; 
+
+class Tour : public piece {
+private:
+public:
+	Tour(string nature, string couleur, pair<int,int> coordonneesInitiales);
+	/*void afficher() override;*/
+	std::vector<std::pair<int, int>> trouverChemin(const std::pair<int, int> destination) override;
+	bool demanderMouvement(const std::pair<int, int> destination) override;
+};
+
+bool Tour::demanderMouvement(const pair<int, int> destination) {
+	if (destination.first != coordonnees_.first && destination.second != coordonnees_.second) {
+		return false;
+	}
+	else
+		return true;
+}
+
+vector<pair<int, int>> Tour::trouverChemin(pair<int, int> destination) {
+	vector<pair<int, int>> chemin;
+	if (coordonnees_.first != destination.first) {
+		if (coordonnees_.first > destination.first) {
+			for (int i = coordonnees_.first - 1; i >= destination.first; i--) {
+				pair<int, int> etape(i, coordonnees_.second);
+				chemin.push_back(etape);
+			}
+		}
+		else
+		{
+			for (int i = coordonnees_.first + 1; i <= destination.first; i++)
+			{
+				pair<int, int> etape(i, coordonnees_.second);
+				chemin.push_back(etape);
+			}
+		}
+	}
+	else
+	{
+		if (coordonnees_.second > destination.second) {
+			for (int i = coordonnees_.second - 1; i >= destination.second; i--)
+			{
+				pair<int, int> etape(coordonnees_.first, i);
+				chemin.push_back(etape);
+			}
+		}
+		else
+		{
+			for (int i = coordonnees_.second + 1; i <= destination.second; i++)
+			{
+				pair<int, int> etape(coordonnees_.first, i);
+				chemin.push_back(etape);
+			}
+		}
+	}
+	return chemin;
+}
