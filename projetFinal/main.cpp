@@ -5,27 +5,25 @@
 #include "structures.h"
 using namespace std;
 
-std::vector<std::pair<int, int>> piece::trouverChemin(const std::pair<int, int> destination) {
+std::vector<std::pair<int, int>> piece::trouverChemin(const std::pair<int, int> depart, const std::pair<int, int> destination) {
 	vector<pair<int, int>> chemin;
 	// Un objet qui est simplement une pièce est une case vide, donc le déplacement est impossible, d'où un chemin vide
 	return chemin;
 }
-bool piece::demanderMouvement(const std::pair<int, int> destination) {
+bool piece::demanderMouvement(const std::pair<int, int> depart, const std::pair<int, int> destination) {
 	// Un objet qui est simplement une pièce est une case vide, donc aucun mouvement n'est possible
 	cout << "La case est vide, il n'y a rien à deplacer" << endl;
 	return false;
 }
-piece::piece(std::pair<int, int> maCase) {
+piece::piece() {
 	nature_ = "X"; // Une nature X signifie une case vide pour l'instant
-	coordonnees_ = maCase;
 }
-piece::piece(string nature, std::string couleur, std::pair<int, int> maCase) {
+piece::piece(string nature, std::string couleur) {
 	nature_ = nature;
 	couleur_ = couleur;
-	coordonnees_ = maCase;
 
 }
-Tour::Tour(string nature, string couleur, pair<int, int> coordonneesInitiales): piece(nature, couleur, coordonneesInitiales) {
+Tour::Tour(string nature, string couleur): piece(nature, couleur) {
 }
 void piece::afficher() {
 	cout << nature_ << " "; // Affiche la nature de la piece
@@ -36,24 +34,18 @@ Echiquier::Echiquier() {
 	{
 		for (int j = 0; j < 8; j++) // Parcours les colonnes de l'échiquier
 		{
-			pair<int, int> coordonneesPiece;
-			coordonneesPiece.first = i;
-			coordonneesPiece.second = j;
-			tableau_[i][j] = make_unique<piece>(coordonneesPiece); // Instantiation d'une case vide aux bonnes coordonnees
+			tableau_[i][j] = make_unique<piece>(); // Instantiation d'une case vide aux bonnes coordonnees
 		}
 	}
 }
-void piece::afficherCoordonnees() {
-	cout << coordonnees_.first << ',' << coordonnees_.second << endl;
- }
+
 template <class TypePiece>
 void Echiquier::modifierCase(const std::pair<int, int> coordonnees, const TypePiece& remplacement) {
 	// L'usage du template TypePiece permet d'éviter l'object slicing 
-	TypePiece nouvellePiece(remplacement.nature_, remplacement.couleur_, coordonnees);
-	tableau_[coordonnees.first][coordonnees.second] = make_unique<TypePiece>(nouvellePiece);
+	tableau_[coordonnees.first][coordonnees.second] = make_unique<TypePiece>(remplacement);
 }
 void Echiquier::viderCase(const std::pair<int, int> coordonnees) {
-	tableau_[coordonnees.first][coordonnees.second] = make_unique<piece>(coordonnees); // Pour vider une case, on place une nouvelle piece X dans le tableau à son endroit
+	tableau_[coordonnees.first][coordonnees.second] = make_unique<piece>(); // Pour vider une case, on place une nouvelle piece X dans le tableau à son endroit
 }
 void Echiquier::afficherEchiquier() {
 	for (int i = 0; i < 8; i++) // Parcours les lignes de l'échiquier
@@ -67,11 +59,11 @@ void Echiquier::afficherEchiquier() {
 }
 void Echiquier::deplacerPiece(const std::pair<int, int> coordonneesInitiales, const std::pair<int, int> coordonneesDestination) {
 	// Demande à la pièce de vérifier si le mouvement demander est possible
-	bool mouvementPossible = tableau_[coordonneesInitiales.first][coordonneesInitiales.second].get()->demanderMouvement(coordonneesDestination);
+	bool mouvementPossible = tableau_[coordonneesInitiales.first][coordonneesInitiales.second].get()->demanderMouvement(coordonneesInitiales, coordonneesDestination);
 	if (mouvementPossible)
 	{
 		// Si le mouvement est possible, on élabore le chemin à suivre en fonction de la pièce
-		std::vector<std::pair<int, int>> chemin = tableau_[coordonneesInitiales.first][coordonneesInitiales.second].get()->trouverChemin(coordonneesDestination);
+		std::vector<std::pair<int, int>> chemin = tableau_[coordonneesInitiales.first][coordonneesInitiales.second].get()->trouverChemin(coordonneesInitiales, coordonneesDestination);
 		// On vérifie que le mouvement ne brise aucune règle de jeu
 		bool mouvementLegal = verifierLegaliteMouvement(chemin, coordonneesDestination);
 		if (mouvementLegal) {
@@ -102,8 +94,7 @@ bool Echiquier::verifierLegaliteMouvement(const std::vector<std::pair<int, int>>
 }
 
 void Echiquier::afficherInfosCase(pair<int, int> coordonnees) {
-	cout << "La case aux coordonnees: ";
-	tableau_[coordonnees.first][coordonnees.second].get()->afficherCoordonnees();
+	cout << "La case aux coordonnees: " << coordonnees.first << ',' << coordonnees.second << endl;
 	cout << "Est une " << tableau_[coordonnees.first][coordonnees.second].get()->nature_;
 
 	cout << " de couleur " << tableau_[coordonnees.first][coordonnees.second].get()->couleur_;
@@ -123,7 +114,7 @@ int main() {
 	nouvelleCoordonnees.second = 3;
 	coordonneesInitiales.second = 4;
 	// On crée une tour 
-	Tour nouvellePiece("T", "noir", coordonneesInitiales);
+	Tour nouvellePiece("T", "noir");
 	cout << "On demande la modification de la case (5,4) en une tour: " << endl;
 	cout << '\n';
 	echiquier.modifierCase(coordonneesInitiales, nouvellePiece);

@@ -8,21 +8,19 @@ using namespace std;
 
 class deplacable{
 	virtual void afficher() = 0;
-	virtual std::vector<std::pair<int, int>> trouverChemin(const std::pair<int, int> destination) = 0; // Retourne un chemin si possible
-	virtual bool demanderMouvement(const std::pair<int, int> destination) = 0; // Demande un mouvement
+	virtual std::vector<std::pair<int, int>> trouverChemin(const std::pair<int, int> depart, const std::pair<int, int> destination) = 0; // Retourne un chemin si possible
+	virtual bool demanderMouvement(const std::pair<int, int> depart, const std::pair<int, int> destination) = 0; // Demande un mouvement
 };
 class piece: private deplacable {
 protected:
 	std::string nature_ = "X";
 	std::string couleur_ = "vide";
-	std::pair<int, int> coordonnees_;
 public:
-	piece(std::pair<int, int> maCase);
-	piece(std::string nature, std::string couleur, std::pair<int, int> maCase); // Rajouter la couleur au concstructeur 
+	piece();
+	piece(std::string nature, std::string couleur); // Rajouter la couleur au concstructeur 
 	void afficher() override;
-	void afficherCoordonnees();
-	std::vector<std::pair<int, int>> trouverChemin(const std::pair<int, int> destination) override;
-	bool demanderMouvement(const std::pair<int, int> destination) override;
+	std::vector<std::pair<int, int>> trouverChemin(const std::pair<int, int> depart, const std::pair<int, int> destination) override;
+	bool demanderMouvement(const std::pair<int, int> depart, const std::pair<int, int> destination) override;
 	friend class Echiquier;
 };
 
@@ -46,52 +44,52 @@ public:
 class Tour : public piece {
 private:
 public:
-	Tour(string nature, string couleur, pair<int,int> coordonneesInitiales);
+	Tour(string nature, string couleur);
 	/*void afficher() override;*/
-	std::vector<std::pair<int, int>> trouverChemin(const std::pair<int, int> destination) override;
-	bool demanderMouvement(const std::pair<int, int> destination) override;
+	std::vector<std::pair<int, int>> trouverChemin(const std::pair<int, int> depart, const std::pair<int, int> destination) override;
+	bool demanderMouvement(const std::pair<int, int> depart, const std::pair<int, int> destination) override;
 };
 
-bool Tour::demanderMouvement(const pair<int, int> destination) {
-	if (destination.first != coordonnees_.first && destination.second != coordonnees_.second) {
+bool Tour::demanderMouvement(const std::pair<int, int> depart, const pair<int, int> destination) {
+	if (destination.first != depart.first && destination.second != depart.second) {
 		return false;
 	}
 	else
 		return true;
 }
 
-vector<pair<int, int>> Tour::trouverChemin(pair<int, int> destination) {
+vector<pair<int, int>> Tour::trouverChemin(const std::pair<int, int> depart, pair<int, int> destination) {
 	vector<pair<int, int>> chemin;
-	if (coordonnees_.first != destination.first) {
-		if (coordonnees_.first > destination.first) {
-			for (int i = coordonnees_.first - 1; i >= destination.first; i--) {
-				pair<int, int> etape(i, coordonnees_.second);
+	if (depart.first != destination.first) {
+		if (depart.first > destination.first) {
+			for (int i = depart.first - 1; i >= destination.first; i--) {
+				pair<int, int> etape(i, depart.second);
 				chemin.push_back(etape);
 			}
 		}
 		else
 		{
-			for (int i = coordonnees_.first + 1; i <= destination.first; i++)
+			for (int i = depart.first + 1; i <= destination.first; i++)
 			{
-				pair<int, int> etape(i, coordonnees_.second);
+				pair<int, int> etape(i, depart.second);
 				chemin.push_back(etape);
 			}
 		}
 	}
 	else
 	{
-		if (coordonnees_.second > destination.second) {
-			for (int i = coordonnees_.second - 1; i >= destination.second; i--)
+		if (depart.second > destination.second) {
+			for (int i = depart.second - 1; i >= destination.second; i--)
 			{
-				pair<int, int> etape(coordonnees_.first, i);
+				pair<int, int> etape(depart.first, i);
 				chemin.push_back(etape);
 			}
 		}
 		else
 		{
-			for (int i = coordonnees_.second + 1; i <= destination.second; i++)
+			for (int i = depart.second + 1; i <= destination.second; i++)
 			{
-				pair<int, int> etape(coordonnees_.first, i);
+				pair<int, int> etape(depart.first, i);
 				chemin.push_back(etape);
 			}
 		}
