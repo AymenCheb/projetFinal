@@ -5,6 +5,9 @@
 #include "structures.h"
 using namespace std;
 
+
+// implémentations de la classe Piece 
+//[
 std::vector<std::pair<int, int>> piece::trouverChemin(const std::pair<int, int> depart, const std::pair<int, int> destination) {
 	vector<pair<int, int>> chemin;
 	// Un objet qui est simplement une pièce est une case vide, donc le déplacement est impossible, d'où un chemin vide
@@ -23,10 +26,12 @@ piece::piece(string nature, std::string couleur) {
 	couleur_ = couleur;
 
 }
-Tour::Tour(string nature, string couleur): piece(nature, couleur) {
-}
+
 void piece::afficher() {
 	cout << nature_ << " "; // Affiche la nature de la piece
+}
+//]
+Tour::Tour(string nature, string couleur) : piece(nature, couleur) {
 }
 Echiquier::Echiquier() {
 	// Quand on crée l'échiquier, on veut que les cases soient vides initialement 
