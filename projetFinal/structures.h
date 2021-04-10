@@ -27,11 +27,11 @@ public:
 
 class Echiquier {
 private:
-	std::unique_ptr<piece> tableau_[8][8]; // Géneration d'un échiquier de 8x8 
+	std::shared_ptr<piece> tableau_[8][8]; // Géneration d'un échiquier de 8x8 
 public:
 	Echiquier();
 	template <class TypePiece>
-	void modifierCase(const std::pair<int, int> coordonnees, const TypePiece& remplacement);
+	void modifierCase(const std::pair<int, int> coordonnees, const shared_ptr<TypePiece>* remplacement);
 	void viderCase(const std::pair<int, int> coordonnees);
 	void deplacerPiece(const std::pair<int, int> coordonneesInitiales, const std::pair<int, int> coordonneesDestination);
 	bool verifierLegaliteMouvement(const std::vector<std::pair<int, int>>, const std::pair<int, int> destination);

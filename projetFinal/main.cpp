@@ -39,18 +39,18 @@ Echiquier::Echiquier() {
 	{
 		for (int j = 0; j < 8; j++) // Parcours les colonnes de l'échiquier
 		{
-			tableau_[i][j] = make_unique<piece>(); // Instantiation d'une case vide aux bonnes coordonnees
+			tableau_[i][j] = make_shared<piece>(); // Instantiation d'une case vide aux bonnes coordonnees
 		}
 	}
 }
 
 template <class TypePiece>
-void Echiquier::modifierCase(const std::pair<int, int> coordonnees, const TypePiece& remplacement) {
+void Echiquier::modifierCase(const std::pair<int, int> coordonnees, const shared_ptr<TypePiece>* remplacement) {
 	// L'usage du template TypePiece permet d'éviter l'object slicing 
-	tableau_[coordonnees.first][coordonnees.second] = make_unique<TypePiece>(remplacement);
+	tableau_[coordonnees.first][coordonnees.second] = *remplacement;
 }
 void Echiquier::viderCase(const std::pair<int, int> coordonnees) {
-	tableau_[coordonnees.first][coordonnees.second] = make_unique<piece>(); // Pour vider une case, on place une nouvelle piece X dans le tableau à son endroit
+	tableau_[coordonnees.first][coordonnees.second] = make_shared<piece>(); // Pour vider une case, on place une nouvelle piece X dans le tableau à son endroit
 }
 void Echiquier::afficherEchiquier() {
 	for (int i = 0; i < 8; i++) // Parcours les lignes de l'échiquier
@@ -73,7 +73,7 @@ void Echiquier::deplacerPiece(const std::pair<int, int> coordonneesInitiales, co
 		bool mouvementLegal = verifierLegaliteMouvement(chemin, coordonneesDestination);
 		if (mouvementLegal) {
 			// Si le mouvement est légal, on modifie la case de destination et on vide la case de départ
-			modifierCase(coordonneesDestination, *tableau_[coordonneesInitiales.first][coordonneesInitiales.second].get());
+			modifierCase(coordonneesDestination, &tableau_[coordonneesInitiales.first][coordonneesInitiales.second]);
 			viderCase(coordonneesInitiales);
 		}
 	}
@@ -120,9 +120,10 @@ int main() {
 	coordonneesInitiales.second = 4;
 	// Creation d'une tour et test de deplacements
 	Tour nouvellePiece("T", "noir");
+	shared_ptr<Tour> pointeurTour = make_shared<Tour>(nouvellePiece);
 	cout << "On demande la modification de la case (5,4) en une tour: " << endl;
 	cout << '\n';
-	echiquier.modifierCase(coordonneesInitiales, nouvellePiece);
+	echiquier.modifierCase(coordonneesInitiales, &pointeurTour);
 	echiquier.afficherEchiquier();
 	cout << sepratation;
 	cout << '\n';
