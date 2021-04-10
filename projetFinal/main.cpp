@@ -25,6 +25,8 @@ piece::piece(string nature, std::string couleur, std::pair<int, int> maCase) {
 	coordonnees_ = maCase;
 
 }
+Tour::Tour(string nature, string couleur, pair<int, int> coordonneesInitiales): piece(nature, couleur, coordonneesInitiales) {
+}
 void piece::afficher() {
 	cout << nature_ << " "; // Affiche la nature de la piece
 }
