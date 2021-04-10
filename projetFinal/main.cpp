@@ -87,7 +87,6 @@ bool Echiquier::verifierLegaliteMouvement(const std::vector<std::pair<int, int>>
 	do
 	{	
 		// Cette boucle Do While s'assure de la legalite du chemin en testant divers règles:
-		etapeChemin++;
 		prochaineCase = chemin[etapeChemin];
 		// Note: On cherche la prochaine case au début de la boucle pour pouvoir effectuer des tests sur la case finale si besoin est
 		// Si il y a une piece sur le chemin, autre que la case finale, le mouvement est illegal
@@ -95,6 +94,7 @@ bool Echiquier::verifierLegaliteMouvement(const std::vector<std::pair<int, int>>
 			cout << "Il y a une pièce sur le chemin voulu autre que sur la case finale: Mouvement illegal!" << endl;
 			return false;
 		}
+		etapeChemin++;
 	} while (prochaineCase != destination); // Tant que la destination finale n'a pas été atteinte, on continue de suivre le chemin
 	return true; // Si aucun des tests n'a échoué, le mouvement est jugé légal 
 }
