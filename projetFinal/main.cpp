@@ -114,11 +114,11 @@ int main() {
 	cout << '\n';
 	// Test d'un changement de case 
 	pair<int, int> nouvelleCoordonnees, coordonneesInitiales;
-	nouvelleCoordonnees.first = 4;
+	nouvelleCoordonnees.first = 3;
 	coordonneesInitiales.first = 5;
-	nouvelleCoordonnees.second = 3;
+	nouvelleCoordonnees.second = 4;
 	coordonneesInitiales.second = 4;
-	// On crée une tour 
+	// Creation d'une tour et test de deplacements
 	Tour nouvellePiece("T", "noir");
 	cout << "On demande la modification de la case (5,4) en une tour: " << endl;
 	cout << '\n';
@@ -126,6 +126,14 @@ int main() {
 	echiquier.afficherEchiquier();
 	cout << sepratation;
 	cout << '\n';
+	cout << "On deplace la tour de 2 cases vers le haut" << endl;
+	echiquier.deplacerPiece(coordonneesInitiales, nouvelleCoordonnees);
+	echiquier.afficherEchiquier();
+	cout << sepratation;
+	cout << '\n';
+	cout << "On tente de deplacer la tour en diagonale" << endl;
+	pair<int, int> coordonneesTest(2, 3);
+	echiquier.deplacerPiece(nouvelleCoordonnees, coordonneesTest);
 	// Test: déplacer une case vide 
 	nouvelleCoordonnees.first = 7;
 	nouvelleCoordonnees.second = 7;
@@ -141,9 +149,5 @@ int main() {
 	nouvelleCoordonnees.second = 0;
 	cout << "On demande l'affichage de la case aux coordonnees:\n" << nouvelleCoordonnees.first << ',' << nouvelleCoordonnees.second << endl;
 	echiquier.afficherInfosCase(nouvelleCoordonnees);
-
-	
-
-
 	return 1;
 }
