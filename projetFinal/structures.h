@@ -62,7 +62,7 @@ public:
 	void afficherInfosCase(std::pair<int,int> coordonnees);
 	
 	
-}; 
+};
 
 class Tour : public piece {
 private:
@@ -119,3 +119,4 @@ vector<pair<int, int>> Tour::trouverChemin(pair<int, int> destination) {
 	}
 	return chemin;
 }
+
