@@ -15,11 +15,15 @@ bool piece::demanderMouvement(const std::pair<int, int> destination) {
 	cout << "La case est vide, il n'y a rien à deplacer" << endl;
 	return false;
 }
-piece::piece() {
+piece::piece(std::pair<int, int> maCase) {
 	nature_ = "X"; // Une nature X signifie une case vide pour l'instant
+	coordonnees_ = maCase;
 }
-piece::piece(string nature) {
+piece::piece(string nature, std::string couleur, std::pair<int, int> maCase) {
 	nature_ = nature;
+	couleur_ = couleur;
+	coordonnees_ = maCase;
+
 }
 void piece::afficher() {
 	cout << nature_ << " "; // Affiche la nature de la piece
@@ -30,18 +34,24 @@ Echiquier::Echiquier() {
 	{
 		for (int j = 0; j < 8; j++) // Parcours les colonnes de l'échiquier
 		{
-			tableau_[i][j] = make_unique<piece>(); // Instantiation d'une case vide aux bonnes coordonnees
+			pair<int, int> coordonneesPiece;
+			coordonneesPiece.first = i;
+			coordonneesPiece.second = j;
+			tableau_[i][j] = make_unique<piece>(coordonneesPiece); // Instantiation d'une case vide aux bonnes coordonnees
 		}
 	}
 }
-
+void piece::afficherCoordonnees() {
+	cout << coordonnees_.first << ',' << coordonnees_.second << endl;
+ }
 template <class TypePiece>
 void Echiquier::modifierCase(const std::pair<int, int> coordonnees, const TypePiece& remplacement) {
 	// L'usage du template TypePiece permet d'éviter l'object slicing 
-	tableau_[coordonnees.first][coordonnees.second] = make_unique<TypePiece>(remplacement);
+	TypePiece nouvellePiece(remplacement.nature_, remplacement.couleur_, coordonnees);
+	tableau_[coordonnees.first][coordonnees.second] = make_unique<TypePiece>(nouvellePiece);
 }
 void Echiquier::viderCase(const std::pair<int, int> coordonnees) {
-	tableau_[coordonnees.first][coordonnees.second] = make_unique<piece>(); // Pour vider une case, on place une nouvelle piece X dans le tableau à son endroit
+	tableau_[coordonnees.first][coordonnees.second] = make_unique<piece>(coordonnees); // Pour vider une case, on place une nouvelle piece X dans le tableau à son endroit
 }
 void Echiquier::afficherEchiquier() {
 	for (int i = 0; i < 8; i++) // Parcours les lignes de l'échiquier
@@ -88,6 +98,14 @@ bool Echiquier::verifierLegaliteMouvement(const std::vector<std::pair<int, int>>
 	} while (prochaineCase != destination); // Tant que la destination finale n'a pas été atteinte, on continue de suivre le chemin
 	return true; // Si aucun des tests n'a échoué, le mouvement est jugé légal 
 }
+
+void Echiquier::afficherInfosCase(pair<int, int> coordonnees) {
+	cout << "La case aux coordonnees: ";
+	tableau_[coordonnees.first][coordonnees.second].get()->afficherCoordonnees();
+	cout << "Est une " << tableau_[coordonnees.first][coordonnees.second].get()->nature_;
+
+	cout << " de couleur " << tableau_[coordonnees.first][coordonnees.second].get()->couleur_;
+}
 int main() {
 	string sepratation = " \n --------------------------------------------------------------- \n";
 	cout << "Tableau initial" << endl;
@@ -99,23 +117,30 @@ int main() {
 	// Test d'un changement de case 
 	pair<int, int> nouvelleCoordonnees, coordonneesInitiales;
 	nouvelleCoordonnees.first = 0;
-	coordonneesInitiales.first = 7;
+	coordonneesInitiales.first = 6;
 	nouvelleCoordonnees.second = 0;
-	coordonneesInitiales.second = 7;
+	coordonneesInitiales.second = 6;
 
-	piece nouvellePiece("T");
+	piece nouvellePiece("T", "noir", coordonneesInitiales);
 	cout << "On demande la modification de la case (0,0) en une piece de nature T: " << endl;
 	cout << '\n';
 	echiquier.modifierCase(nouvelleCoordonnees, nouvellePiece);
 	echiquier.afficherEchiquier();
 	// Test: déplacer une case vide 
 	
-	nouvelleCoordonnees.first = 8;
-	nouvelleCoordonnees.second = 8;
+	nouvelleCoordonnees.first = 7;
+	nouvelleCoordonnees.second = 7;
 	cout << sepratation;
 	cout << '\n';
-	cout << "On demande le deplacement de la piece a la case (7,7), vers la case (8,8) :" << endl;
+	cout << "On demande le deplacement de la piece a la case (6,6), vers la case (7,7) :" << endl;
 	cout << '\n';
 	echiquier.deplacerPiece(coordonneesInitiales ,nouvelleCoordonnees);
+	cout << sepratation;
+	cout << '\n';
+	// Test: Affichage d'une case pour vérifier qu'elle a les bonnes coordonnees, nature/couleur... 
+	nouvelleCoordonnees.first = 0;
+	nouvelleCoordonnees.second = 0;
+	cout << "On demande l'affichage de la case aux coordonnees:\n" << nouvelleCoordonnees.first << ',' << nouvelleCoordonnees.second << endl;
+	echiquier.afficherInfosCase(nouvelleCoordonnees);
 	return 1;
 }

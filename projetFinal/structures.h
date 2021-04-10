@@ -13,13 +13,14 @@ class deplacable{
 };
 class piece: private deplacable {
 protected:
-	std::string nature_;
-	std::string couleur_;
+	std::string nature_ = "X";
+	std::string couleur_ = "vide";
 	std::pair<int, int> coordonnees_;
 public:
-	piece();
-	piece(std::string nature); // Rajouter la couleur au concstructeur 
+	piece(std::pair<int, int> maCase);
+	piece(std::string nature, std::string couleur, std::pair<int, int> maCase); // Rajouter la couleur au concstructeur 
 	void afficher() override;
+	void afficherCoordonnees();
 	std::vector<std::pair<int, int>> trouverChemin(const std::pair<int, int> destination) override;
 	bool demanderMouvement(const std::pair<int, int> destination) override;
 	friend class Echiquier;
@@ -58,6 +59,7 @@ public:
 	void deplacerPiece(const std::pair<int, int> coordonneesInitiales, const std::pair<int, int> coordonneesDestination);
 	bool verifierLegaliteMouvement(const std::vector<std::pair<int, int>>, const std::pair<int, int> destination);
 	void afficherEchiquier();
+	void afficherInfosCase(std::pair<int,int> coordonnees);
 	
 	
-};
+}; 
