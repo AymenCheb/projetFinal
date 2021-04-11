@@ -97,3 +97,36 @@ vector<pair<int, int>> Tour::trouverChemin(const std::pair<int, int> depart, pai
 	return chemin;
 }
 
+class Cavalier : public piece {
+private:
+public:
+	Cavalier(string nature, string couleur);
+	/*void afficher() override;*/
+	std::vector<std::pair<int, int>> trouverChemin(const std::pair<int, int> depart, const std::pair<int, int> destination) override;
+	bool demanderMouvement(const std::pair<int, int> depart, const std::pair<int, int> destination) override;
+};
+
+bool Cavalier::demanderMouvement(const std::pair<int, int> depart, const pair<int, int> destination) {
+	int differenceX = depart.first - destination.first;
+	int differenceY = depart.second - destination.second;
+	if (differenceX == -2 || differenceX == 2) {
+		if (differenceY == -1 || differenceY == 1)
+			return true;
+		else
+			return false;
+	}
+	if (differenceY == -2 || differenceY == 2) {
+		if (differenceX == -1 || differenceX == 1)
+			return true;
+		else
+			return false;
+	}
+	return false;
+}
+
+std::vector<std::pair<int, int>> Cavalier::trouverChemin(const std::pair<int, int> depart, const std::pair<int, int> destination) {
+	vector<pair<int, int>> chemin;
+	chemin.push_back(destination);
+	return chemin;
+}
+

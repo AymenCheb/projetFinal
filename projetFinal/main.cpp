@@ -31,8 +31,13 @@ void piece::afficher() {
 	cout << nature_ << " "; // Affiche la nature de la piece
 }
 //]
+//Constructeur des tours
 Tour::Tour(string nature, string couleur) : piece(nature, couleur) {
 }
+//Constructeur des cavaliers
+Cavalier::Cavalier(string nature, string couleur) : piece(nature, couleur) {
+}
+
 Echiquier::Echiquier() {
 	// Quand on crée l'échiquier, on veut que les cases soient vides initialement 
 	for (int i = 0; i < 8; i++) // Parcours les lignes de l'échiquier
@@ -150,5 +155,29 @@ int main() {
 	nouvelleCoordonnees.second = 0;
 	cout << "On demande l'affichage de la case aux coordonnees:\n" << nouvelleCoordonnees.first << ',' << nouvelleCoordonnees.second << endl;
 	echiquier.afficherInfosCase(nouvelleCoordonnees);
+	cout << sepratation;
+	cout << '\n';
+	//Test du cavalier
+	Cavalier premierCavalier("C", "noir");
+	shared_ptr<Cavalier> pointeurCavalier = make_shared<Cavalier>(premierCavalier);
+	pair<int, int> coordonneesCavalier(5, 4);
+	echiquier.modifierCase(coordonneesCavalier, &pointeurCavalier);
+	cout << "On positionne un cavalier aux coordonnees (5,4)" << endl;
+	echiquier.afficherEchiquier();
+	cout << sepratation;
+	cout << '\n';
+	//Deplacement legal du cavalier
+	pair<int, int> deplacementCavalier(3, 3);
+	echiquier.deplacerPiece(coordonneesCavalier, deplacementCavalier);
+	cout << "On deplace le cavaleir aux coordonnees (3,3)" << endl;
+	echiquier.afficherEchiquier();
+	cout << sepratation;
+	cout << '\n';
+	//Deplacment illegal du cavalier
+	pair<int, int> deplacementIllegalCavalier(2, 2);
+	cout << "On essaie de deplacer le cavalier a la position (2,2)" << endl;
+	echiquier.deplacerPiece(deplacementCavalier, deplacementIllegalCavalier);
+	
+	
 	return 1;
 }
