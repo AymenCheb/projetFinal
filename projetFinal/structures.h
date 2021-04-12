@@ -4,7 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <memory>
-
+using namespace std;
 
 class deplacable{
 	virtual void afficher() = 0;
