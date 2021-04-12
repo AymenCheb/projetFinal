@@ -20,6 +20,7 @@ bool piece::demanderMouvement(const std::pair<int, int> depart, const std::pair<
 }
 piece::piece() {
 	nature_ = "X"; // Une nature X signifie une case vide pour l'instant
+	couleur_ = "aucune";
 }
 piece::piece(string nature, std::string couleur) {
 	nature_ = nature;
@@ -75,7 +76,7 @@ void Echiquier::deplacerPiece(const std::pair<int, int> coordonneesInitiales, co
 		// Si le mouvement est possible, on élabore le chemin à suivre en fonction de la pièce
 		std::vector<std::pair<int, int>> chemin = tableau_[coordonneesInitiales.first][coordonneesInitiales.second].get()->trouverChemin(coordonneesInitiales, coordonneesDestination);
 		// On vérifie que le mouvement ne brise aucune règle de jeu
-		bool mouvementLegal = verifierLegaliteMouvement(chemin, coordonneesDestination);
+		bool mouvementLegal = verifierLegaliteMouvement(chemin, coordonneesDestination, tableau_[coordonneesInitiales.first][coordonneesInitiales.second].get()->couleur_);
 		if (mouvementLegal) {
 			// Si le mouvement est légal, on modifie la case de destination et on vide la case de départ
 			modifierCase(coordonneesDestination, &tableau_[coordonneesInitiales.first][coordonneesInitiales.second]);
@@ -85,7 +86,7 @@ void Echiquier::deplacerPiece(const std::pair<int, int> coordonneesInitiales, co
 	else cout << "Mouvement impossible " << endl;
 }
 
-bool Echiquier::verifierLegaliteMouvement(const std::vector<std::pair<int, int>> chemin, const std::pair<int, int> destination) {
+bool Echiquier::verifierLegaliteMouvement(const std::vector<std::pair<int, int>> chemin, const std::pair<int, int> destination, string couleurPiece) {
 	int etapeChemin = 0;
 	pair<int, int> prochaineCase = chemin[etapeChemin];
 	do
@@ -96,6 +97,10 @@ bool Echiquier::verifierLegaliteMouvement(const std::vector<std::pair<int, int>>
 		// Si il y a une piece sur le chemin, autre que la case finale, le mouvement est illegal
 		if (tableau_[prochaineCase.first][prochaineCase.second].get()->nature_ != "X" and prochaineCase != destination) {
 			cout << "Il y a une pièce sur le chemin voulu autre que sur la case finale: Mouvement illegal!" << endl;
+			return false;
+		}
+		else if (prochaineCase == destination and tableau_[prochaineCase.first][prochaineCase.second].get()->couleur_ == couleurPiece) {
+			cout << "La destiantion contient une piece de la même couleur: Mouvement illegal!" << endl;
 			return false;
 		}
 		etapeChemin++;
