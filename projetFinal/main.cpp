@@ -15,7 +15,7 @@ std::vector<std::pair<int, int>> piece::trouverChemin(const std::pair<int, int> 
 }
 bool piece::demanderMouvement(const std::pair<int, int> depart, const std::pair<int, int> destination) {
 	// Un objet qui est simplement une pièce est une case vide, donc aucun mouvement n'est possible
-	cout << "La case est vide, il n'y a rien à deplacer" << endl;
+	cout << "La case est vide, il n'y a rien a deplacer" << endl;
 	return false;
 }
 piece::piece() {
@@ -99,11 +99,11 @@ bool Echiquier::verifierLegaliteMouvement(const std::vector<std::pair<int, int>>
 		// Note: On cherche la prochaine case au début de la boucle pour pouvoir effectuer des tests sur la case finale si besoin est
 		// Si il y a une piece sur le chemin, autre que la case finale, le mouvement est illegal
 		if (tableau_[prochaineCase.first][prochaineCase.second].get()->nature_ != "X" and prochaineCase != destination) {
-			cout << "Il y a une pièce sur le chemin voulu autre que sur la case finale: Mouvement illegal!" << endl;
+			cout << "Il y a une piece sur le chemin voulu autre que sur la case finale: Mouvement illegal!" << endl;
 			return false;
 		}
 		else if (prochaineCase == destination and tableau_[prochaineCase.first][prochaineCase.second].get()->couleur_ == couleurPiece) {
-			cout << "La destiantion contient une piece de la même couleur: Mouvement illegal!" << endl;
+			cout << "La destiantion contient une piece de la meme couleur: Mouvement illegal!" << endl;
 			return false;
 		}
 		etapeChemin++;
@@ -125,29 +125,7 @@ int main() {
 	echiquier.afficherEchiquier();
 	cout << sepratation;
 	cout << '\n';
-	// Test d'un changement de case 
 	pair<int, int> nouvelleCoordonnees, coordonneesInitiales;
-	nouvelleCoordonnees.first = 3;
-	coordonneesInitiales.first = 5;
-	nouvelleCoordonnees.second = 4;
-	coordonneesInitiales.second = 4;
-	// Creation d'une tour et test de deplacements
-	Tour nouvellePiece("T", "noir");
-	shared_ptr<Tour> pointeurTour = make_shared<Tour>(nouvellePiece);
-	cout << "On demande la modification de la case (5,4) en une tour: " << endl;
-	cout << '\n';
-	echiquier.modifierCase(coordonneesInitiales, &pointeurTour);
-	echiquier.afficherEchiquier();
-	cout << sepratation;
-	cout << '\n';
-	cout << "On deplace la tour de 2 cases vers le haut" << endl;
-	echiquier.deplacerPiece(coordonneesInitiales, nouvelleCoordonnees);
-	echiquier.afficherEchiquier();
-	cout << sepratation;
-	cout << '\n';
-	cout << "On tente de deplacer la tour en diagonale" << endl;
-	pair<int, int> coordonneesTest(2, 3);
-	echiquier.deplacerPiece(nouvelleCoordonnees, coordonneesTest);
 	// Test: déplacer une case vide 
 	nouvelleCoordonnees.first = 7;
 	nouvelleCoordonnees.second = 7;
@@ -155,22 +133,53 @@ int main() {
 	cout << '\n';
 	cout << "On demande le deplacement de la piece a la case (6,6), vers la case (7,7) :" << endl;
 	cout << '\n';
-	echiquier.deplacerPiece(coordonneesInitiales ,nouvelleCoordonnees);
+	echiquier.deplacerPiece(coordonneesInitiales, nouvelleCoordonnees);
+	cout << '\n';
+	echiquier.afficherEchiquier();
 	cout << sepratation;
 	cout << '\n';
-	// Test: Affichage d'une case pour vérifier qu'elle a les bonnes coordonnees, nature/couleur... 
-	nouvelleCoordonnees.first = 0;
-	nouvelleCoordonnees.second = 0;
-	cout << "On demande l'affichage de la case aux coordonnees:\n" << nouvelleCoordonnees.first << ',' << nouvelleCoordonnees.second << endl;
-	echiquier.afficherInfosCase(nouvelleCoordonnees);
+	//Coordonnees pour tester des deplacmeents de pieces
+	nouvelleCoordonnees.first = 3;
+	coordonneesInitiales.first = 5;
+	nouvelleCoordonnees.second = 4;
+	coordonneesInitiales.second = 4;
+
+	// Creation d'une tour et test de deplacements
+	//Creation de la tour et positionnement de la tour aux coordonnees
+	Tour nouvellePiece("T", "noir");
+	shared_ptr<Tour> pointeurTour = make_shared<Tour>(nouvellePiece);
+	cout << "On demande la modification de la case (5,4) en une tour: " << endl;
+	cout << '\n';
+	echiquier.modifierCase(coordonneesInitiales, &pointeurTour);
+	cout << '\n';
+	echiquier.afficherEchiquier();
 	cout << sepratation;
 	cout << '\n';
-	//Test du cavalier
+	//Deplacement legal de la tour
+	cout << "On deplace la tour de 2 cases vers le haut" << endl;
+	echiquier.deplacerPiece(coordonneesInitiales, nouvelleCoordonnees);
+	cout << '\n';
+	echiquier.afficherEchiquier();
+	cout << sepratation;
+	cout << '\n';
+	//Deplacement illegal de la tour
+	cout << "On tente de deplacer la tour en diagonale" << endl;
+	pair<int, int> coordonneesTest(2, 3);
+	echiquier.deplacerPiece(nouvelleCoordonnees, coordonneesTest);
+	cout << '\n';
+	echiquier.afficherEchiquier();
+	cout << sepratation;
+	cout << '\n';
+
+
+	//Creation d'un cavalier et test de deplacements
+	//Creation du cavalier et positionnement
 	Cavalier premierCavalier("C", "noir");
 	shared_ptr<Cavalier> pointeurCavalier = make_shared<Cavalier>(premierCavalier);
 	pair<int, int> coordonneesCavalier(5, 4);
 	echiquier.modifierCase(coordonneesCavalier, &pointeurCavalier);
 	cout << "On positionne un cavalier aux coordonnees (5,4)" << endl;
+	cout << '\n';
 	echiquier.afficherEchiquier();
 	cout << sepratation;
 	cout << '\n';
@@ -178,6 +187,7 @@ int main() {
 	pair<int, int> deplacementCavalier(3, 3);
 	echiquier.deplacerPiece(coordonneesCavalier, deplacementCavalier);
 	cout << "On deplace le cavaleir aux coordonnees (3,3)" << endl;
+	cout << '\n';
 	echiquier.afficherEchiquier();
 	cout << sepratation;
 	cout << '\n';
@@ -185,38 +195,71 @@ int main() {
 	pair<int, int> deplacementIllegalCavalier(2, 2);
 	cout << "On essaie de deplacer le cavalier a la position (2,2)" << endl;
 	echiquier.deplacerPiece(deplacementCavalier, deplacementIllegalCavalier);
+	cout << '\n';
+	echiquier.afficherEchiquier();
+	cout << sepratation;
+	cout << '\n';
 	
-	//Test du roi
+
+
+	//Creation d'un roi et test de deplacements
+	//Creation du roi et positionnement
 	Roi premierRoi("R", "noir");
 	shared_ptr<Roi> pointeurRoi = make_shared<Roi>(premierRoi);
 	pair<int, int> coordonneesRoi(2, 4);
 	echiquier.modifierCase(coordonneesRoi, &pointeurRoi);
 	cout << "On positionne le Roi aux coordonnees(2,4)" << endl;
+	cout << '\n';
 	echiquier.afficherEchiquier();
 	cout << sepratation;
 	cout << '\n';
-	//Deplacement du Roi
+	//Deplacement legal du Roi
 	pair<int, int> deplacementRoi(2, 5);
 	echiquier.deplacerPiece(coordonneesRoi, deplacementRoi);
 	cout << "On deplace le Roi aux coordonnees (2,5)" << endl;
 	cout << '\n';
 	echiquier.afficherEchiquier();
+	cout << sepratation;
 	cout << '\n';
-	//Test verifier longueur de deplacement
+	//Deplacement illegal du roi
 	pair<int, int> deplacementIllegalRoi(4, 6);
 	cout << "On essaie de deplacer le Roi aux coordonnees (3,6), donc de deux cases." << endl;
 	cout << '\n';
 	echiquier.deplacerPiece(deplacementRoi, deplacementIllegalRoi);
+	cout << '\n';
 	echiquier.afficherEchiquier();
 	cout << sepratation;
 	cout << '\n';
-	//Test verifier si il mange une piece ami
+
+
+	//Test pour deplacer une piece sur une case contenant une autre piece d'une meme couleur
 	pair<int, int> deplacementRoiMange(3, 4);
-	cout << "On essaie de deplacer le Roi aux coordonnees(3, 4), où une piece ami se trouve" << endl;
+	cout << "On essaie de deplacer le Roi aux coordonnees(3, 4), ou une piece alliee se trouve" << endl;
 	cout << '\n';
 	echiquier.deplacerPiece(deplacementRoi, deplacementRoiMange);
-	echiquier.afficherEchiquier();
 	cout << '\n';
-	
+	echiquier.afficherEchiquier();
+	cout << sepratation;
+	cout << '\n';
+
+
+	//Test deplacer une tour alors q'une piece se trouve sur son chemin
+	cout << "On essaie de deplacer la Tour des coordonnees (3,4) aux coordonnees (3,2), alors qu'un cavalier allie se trouve aux coordonnees (3,3)" << endl;
+	nouvelleCoordonnees.first = 3;
+	nouvelleCoordonnees.second = 4;
+	pair<int, int> coordonneesDeplacementTour(3, 2);
+	echiquier.deplacerPiece(nouvelleCoordonnees, coordonneesDeplacementTour);
+	cout << '\n';
+	echiquier.afficherEchiquier();
+	cout << sepratation;
+	cout << '\n';
+
+	// Test: Affichage d'une case pour vérifier qu'elle a les bonnes coordonnees, nature/couleur... 
+	nouvelleCoordonnees.first = 3;
+	nouvelleCoordonnees.second = 4;
+	cout << "On demande l'affichage de la case aux coordonnees:\n" << nouvelleCoordonnees.first << ',' << nouvelleCoordonnees.second << endl;
+	echiquier.afficherInfosCase(nouvelleCoordonnees);
+	cout << sepratation;
+	cout << '\n';
 	return 1;
 }
