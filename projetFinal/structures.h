@@ -130,3 +130,25 @@ std::vector<std::pair<int, int>> Cavalier::trouverChemin(const std::pair<int, in
 	return chemin;
 }
 
+class Roi :public piece {
+private:
+public:
+	Roi(string nature, string couleur);
+	std::vector<std::pair<int, int>>trouverChemin(const std::pair<int, int> depart, const std::pair<int, int> destination) override;
+	bool demanderMouvement(const std::pair<int, int> depart, const std::pair<int, int> destination) override;
+};
+
+bool Roi::demanderMouvement(const std::pair<int, int> depart, const std::pair<int, int> destination) {
+	int differenceX = depart.first - destination.first;
+	int differenceY = depart.second - destination.second;
+	if (abs(differenceX) > 1 || abs(differenceY) > 1)
+		return false;
+	else
+		return true;
+}
+
+std::vector<std::pair<int, int>> Roi::trouverChemin(const std::pair<int, int> depart, const std::pair<int, int> destination) {
+	vector<pair<int, int>> chemin;
+	chemin.push_back(destination);
+	return chemin;
+}
