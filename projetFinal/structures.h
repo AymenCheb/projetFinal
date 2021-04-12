@@ -4,7 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <memory>
-using namespace std;
+
 
 class deplacable{
 	virtual void afficher() = 0;
@@ -130,6 +130,7 @@ std::vector<std::pair<int, int>> Cavalier::trouverChemin(const std::pair<int, in
 	return chemin;
 }
 
+//implementation de la piece Roi
 class Roi :public piece {
 private:
 public:
@@ -138,15 +139,17 @@ public:
 	bool demanderMouvement(const std::pair<int, int> depart, const std::pair<int, int> destination) override;
 };
 
+//Mouvement du Roi
 bool Roi::demanderMouvement(const std::pair<int, int> depart, const std::pair<int, int> destination) {
 	int differenceX = depart.first - destination.first;
 	int differenceY = depart.second - destination.second;
-	if (abs(differenceX) > 1 || abs(differenceY) > 1)
+	if (abs(differenceX) > 1 || abs(differenceY) > 1)		//Roi peut seulement bouger de 1 cases a la fois
 		return false;
 	else
 		return true;
 }
 
+//le Roi peut bouger a n'importe quelle cases autour de lui (Pour ce TP)
 std::vector<std::pair<int, int>> Roi::trouverChemin(const std::pair<int, int> depart, const std::pair<int, int> destination) {
 	vector<pair<int, int>> chemin;
 	chemin.push_back(destination);
