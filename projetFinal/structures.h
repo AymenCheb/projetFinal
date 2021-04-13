@@ -9,7 +9,7 @@ using namespace std;
 class deplacable{
 	virtual void afficher() = 0;
 	virtual std::vector<std::pair<int, int>> trouverChemin(const std::pair<int, int> depart, const std::pair<int, int> destination) = 0; // Retourne un chemin si possible
-	virtual bool demanderMouvement(const std::pair<int, int> depart, const std::pair<int, int> destination) = 0; // Demande un mouvement
+	virtual bool demanderMouvement(const std::pair<int, int> depart, const std::pair<int, int> destination) = 0; // Demande un mouvement, return true si la piece peut se deplacer de cette maniere , sinon false
 };
 class piece: private deplacable {
 protected:
@@ -50,52 +50,6 @@ public:
 	bool demanderMouvement(const std::pair<int, int> depart, const std::pair<int, int> destination) override;
 };
 
-bool Tour::demanderMouvement(const std::pair<int, int> depart, const pair<int, int> destination) {
-	if (destination.first != depart.first && destination.second != depart.second) {
-		return false;
-	}
-	else
-		return true;
-}
-
-vector<pair<int, int>> Tour::trouverChemin(const std::pair<int, int> depart, pair<int, int> destination) {
-	vector<pair<int, int>> chemin;
-	if (depart.first != destination.first) {
-		if (depart.first > destination.first) {
-			for (int i = depart.first - 1; i >= destination.first; i--) {
-				pair<int, int> etape(i, depart.second);
-				chemin.push_back(etape);
-			}
-		}
-		else
-		{
-			for (int i = depart.first + 1; i <= destination.first; i++)
-			{
-				pair<int, int> etape(i, depart.second);
-				chemin.push_back(etape);
-			}
-		}
-	}
-	else
-	{
-		if (depart.second > destination.second) {
-			for (int i = depart.second - 1; i >= destination.second; i--)
-			{
-				pair<int, int> etape(depart.first, i);
-				chemin.push_back(etape);
-			}
-		}
-		else
-		{
-			for (int i = depart.second + 1; i <= destination.second; i++)
-			{
-				pair<int, int> etape(depart.first, i);
-				chemin.push_back(etape);
-			}
-		}
-	}
-	return chemin;
-}
 
 class Cavalier : public piece {
 private:
@@ -106,29 +60,6 @@ public:
 	bool demanderMouvement(const std::pair<int, int> depart, const std::pair<int, int> destination) override;
 };
 
-bool Cavalier::demanderMouvement(const std::pair<int, int> depart, const pair<int, int> destination) {
-	int differenceX = depart.first - destination.first;
-	int differenceY = depart.second - destination.second;
-	if (differenceX == -2 || differenceX == 2) {
-		if (differenceY == -1 || differenceY == 1)
-			return true;
-		else
-			return false;
-	}
-	if (differenceY == -2 || differenceY == 2) {
-		if (differenceX == -1 || differenceX == 1)
-			return true;
-		else
-			return false;
-	}
-	return false;
-}
-
-std::vector<std::pair<int, int>> Cavalier::trouverChemin(const std::pair<int, int> depart, const std::pair<int, int> destination) {
-	vector<pair<int, int>> chemin;
-	chemin.push_back(destination);
-	return chemin;
-}
 
 //implementation de la piece Roi
 class Roi :public piece {
@@ -138,20 +69,3 @@ public:
 	std::vector<std::pair<int, int>>trouverChemin(const std::pair<int, int> depart, const std::pair<int, int> destination) override;
 	bool demanderMouvement(const std::pair<int, int> depart, const std::pair<int, int> destination) override;
 };
-
-//Mouvement du Roi
-bool Roi::demanderMouvement(const std::pair<int, int> depart, const std::pair<int, int> destination) {
-	int differenceX = depart.first - destination.first;
-	int differenceY = depart.second - destination.second;
-	if (abs(differenceX) > 1 || abs(differenceY) > 1)		//Roi peut seulement bouger de 1 cases a la fois
-		return false;
-	else
-		return true;
-}
-
-//le Roi peut bouger a n'importe quelle cases autour de lui (Pour ce TP)
-std::vector<std::pair<int, int>> Roi::trouverChemin(const std::pair<int, int> depart, const std::pair<int, int> destination) {
-	vector<pair<int, int>> chemin;
-	chemin.push_back(destination);
-	return chemin;
-}

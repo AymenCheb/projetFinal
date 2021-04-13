@@ -27,11 +27,14 @@ piece::piece(string nature, std::string couleur) {
 	couleur_ = couleur;
 
 }
-
 void piece::afficher() {
 	cout << nature_ << " "; // Affiche la nature de la piece
 }
 //]
+
+
+//Constructeurs des differentes pieces
+//[
 //Constructeur des tours
 Tour::Tour(string nature, string couleur) : piece(nature, couleur) {
 }
@@ -41,7 +44,10 @@ Cavalier::Cavalier(string nature, string couleur) : piece(nature, couleur) {
 //Constructeur des Rois
 Roi::Roi(string nature, string couleur) : piece(nature, couleur) {
 }
+//]
 
+
+//Constructeur de l'echiquier
 Echiquier::Echiquier() {
 	// Quand on crée l'échiquier, on veut que les cases soient vides initialement 
 	for (int i = 0; i < 8; i++) // Parcours les lignes de l'échiquier
@@ -53,14 +59,21 @@ Echiquier::Echiquier() {
 	}
 }
 
+
+//Differentes methodes de la classe Echiquier
+//[
+//Cette methode permet de modifier une case precise de l'echiquier, en passant en parametre les coordonnees de la case, ainsi que la piece que l'on souhaite placer a cette case
 template <class TypePiece>
 void Echiquier::modifierCase(const std::pair<int, int> coordonnees, const shared_ptr<TypePiece>* remplacement) {
 	// L'usage du template TypePiece permet d'éviter l'object slicing 
 	tableau_[coordonnees.first][coordonnees.second] = *remplacement;
 }
+
+//Cette methode permet de vider une case, en y inserant une Piece ( directement de la classe Piece, cette Piece n'est ni une tour, ni un fou etc..)
 void Echiquier::viderCase(const std::pair<int, int> coordonnees) {
 	tableau_[coordonnees.first][coordonnees.second] = make_shared<piece>(); // Pour vider une case, on place une nouvelle piece X dans le tableau à son endroit
 }
+//Methode pour afficher l'echiquier dans le terminal
 void Echiquier::afficherEchiquier() {
 	for (int i = 0; i < 8; i++) // Parcours les lignes de l'échiquier
 	{
@@ -71,6 +84,8 @@ void Echiquier::afficherEchiquier() {
 		cout << '\n'; // 
 	}
 }
+
+// Methode permettant de deplacer une piece, on donne en parametres les coordonnees initiales de la piece ainsi que les coordonnees de destination
 void Echiquier::deplacerPiece(const std::pair<int, int> coordonneesInitiales, const std::pair<int, int> coordonneesDestination) {
 	// Demande à la pièce de vérifier si le mouvement demander est possible
 	bool mouvementPossible = tableau_[coordonneesInitiales.first][coordonneesInitiales.second].get()->demanderMouvement(coordonneesInitiales, coordonneesDestination);
@@ -89,6 +104,8 @@ void Echiquier::deplacerPiece(const std::pair<int, int> coordonneesInitiales, co
 	else cout << "Mouvement impossible " << endl;
 }
 
+/*Methode permettant de verifier la legallite d'un mouvement : ce n'est pas cette methode qui verifie les regles de deplacement specifiques a chaque pieces,
+cette methode verifie plutot des regles plus generales, comme par exemple si une piece alliee se trouve sur la case sur laquelle on souhaite se deplacer etc*/
 bool Echiquier::verifierLegaliteMouvement(const std::vector<std::pair<int, int>> chemin, const std::pair<int, int> destination, string couleurPiece) {
 	int etapeChemin = 0;
 	pair<int, int> prochaineCase = chemin[etapeChemin];
@@ -111,12 +128,123 @@ bool Echiquier::verifierLegaliteMouvement(const std::vector<std::pair<int, int>>
 	return true; // Si aucun des tests n'a échoué, le mouvement est jugé légal 
 }
 
+//Methode qui permet d'afficher les informations d'une case precise, on passe en parametre les coordonnees de la case
 void Echiquier::afficherInfosCase(pair<int, int> coordonnees) {
 	cout << "La case aux coordonnees: " << coordonnees.first << ',' << coordonnees.second << endl;
 	cout << "Est une " << tableau_[coordonnees.first][coordonnees.second].get()->nature_;
 
 	cout << " de couleur " << tableau_[coordonnees.first][coordonnees.second].get()->couleur_;
+}//]
+
+
+//[
+/*Implementation des methodes demanderMouvement specifiques a chaque piece : cette methode retourne, en fonction de la piece, true si cette piece
+peut se deplacer de la maniere dont on souhaite le faire, ou false si le deplacement demander brise les regles de deplacement de cette piece*/
+
+bool Tour::demanderMouvement(const std::pair<int, int> depart, const pair<int, int> destination) {
+	//La tour se deplace soit horizontalement, soit verticalement, de ce fait , si ses coordonnees de depart sont (x,y), alors a l'arrivee, aux coordonnees (w,z)
+	//si le mouvement est legal, on aura alors x = w ou y = z
+	if (destination.first != depart.first && destination.second != depart.second) {
+		return false;
+	}
+	else
+		return true;
 }
+
+bool Cavalier::demanderMouvement(const std::pair<int, int> depart, const pair<int, int> destination) {
+	/*Le cavalier se deplace en L. De ce fait, si il se deplace de 2 cases vers le haut ou le bas, il doit se deplacer d'une case vers la gauche ou vers la droite
+	De la meme maniere, s'il se deplace de 2 cases vers la gauche ou vers la droite, il doit se deplacer d'une case vers le haut ou vers le bas
+	Tout autre mouvement est illegal*/
+	int differenceX = depart.first - destination.first;
+	int differenceY = depart.second - destination.second;
+	if (differenceX == -2 || differenceX == 2) {
+		if (differenceY == -1 || differenceY == 1)
+			return true;
+		else
+			return false;
+	}
+	if (differenceY == -2 || differenceY == 2) {
+		if (differenceX == -1 || differenceX == 1)
+			return true;
+		else
+			return false;
+	}
+	return false;
+}
+
+bool Roi::demanderMouvement(const std::pair<int, int> depart, const std::pair<int, int> destination) {
+	/*Le roi peut se deplacer uniquement d'une cases dans toute les direction. Si il part de (x,y) et arrive a (w,z)
+	alors,  |x-w| > 1 ou si |y-z| > 1, cela signifie que le roi ne s'est pas deplacer uniquement d'une case,
+	et son mouvement est donc illegal*/
+	int differenceX = depart.first - destination.first;
+	int differenceY = depart.second - destination.second;
+	if (abs(differenceX) > 1 || abs(differenceY) > 1)		//Roi peut seulement bouger de 1 cases a la fois
+		return false;
+	else
+		return true;
+}
+//]
+
+//[
+/*Implementation des methodes trouverChemin specifiques a chaque piece, cette methode retourne un vector contenant
+les coordonnees des differentes cases par lesquelles une piece doit passer pour se rendre de sa case initiale jusqu'a celle
+a laquelle on souahite la deplacer*/
+
+vector<pair<int, int>> Tour::trouverChemin(const std::pair<int, int> depart, pair<int, int> destination) {
+	vector<pair<int, int>> chemin;
+	if (depart.first != destination.first) {   //Si la tour se deplace verticalement
+		if (depart.first > destination.first) {  // Si la tour se deplace vers le haut 
+			for (int i = depart.first - 1; i >= destination.first; i--) { // A chaque iteration, on rajoute les coordonnees de la case par laquelle la tour passe, en incluant la case d'arrivee, et en excluant la case de depart
+				pair<int, int> etape(i, depart.second);
+				chemin.push_back(etape);
+			}
+		}
+		else //Si la tour se depalce vers le bas
+		{
+			for (int i = depart.first + 1; i <= destination.first; i++)// A chaque iteration, on rajoute les coordonnees de la case par laquelle la tour passe, en incluant la case d'arrivee, et en excluant la case de depart
+			{
+				pair<int, int> etape(i, depart.second);
+				chemin.push_back(etape);
+			}
+		}
+	}
+	else // Si la tour se deplace horizontalement
+	{
+		if (depart.second > destination.second) { // Si la tour se depalce vers la gauche 
+			for (int i = depart.second - 1; i >= destination.second; i--)// A chaque iteration, on rajoute les coordonnees de la case par laquelle la tour passe, en incluant la case d'arrivee, et en excluant la case de depart
+			{
+				pair<int, int> etape(depart.first, i);
+				chemin.push_back(etape);
+			}
+		}
+		else //Si la tour se depalce vers la droite
+		{
+			for (int i = depart.second + 1; i <= destination.second; i++)// A chaque iteration, on rajoute les coordonnees de la case par laquelle la tour passe, en incluant la case d'arrivee, et en excluant la case de depart
+			{
+				pair<int, int> etape(depart.first, i);
+				chemin.push_back(etape);
+			}
+		}
+	}
+	return chemin;
+}
+
+std::vector<std::pair<int, int>> Cavalier::trouverChemin(const std::pair<int, int> depart, const std::pair<int, int> destination) {
+	//Le chemin du deplacement d'un cavalier est uniquement sa case d'arrivee, car il passe directement de sa case de depart a sa case d'arrivee.
+	vector<pair<int, int>> chemin;
+	chemin.push_back(destination);
+	return chemin;
+}
+
+std::vector<std::pair<int, int>> Roi::trouverChemin(const std::pair<int, int> depart, const std::pair<int, int> destination) {
+	//Le roi se deplace uniquement d'une case, son chemin de deplacement est donc uniquement composer de sa case d'arrivee
+	vector<pair<int, int>> chemin;
+	chemin.push_back(destination);
+	return chemin;
+}
+//]
+
+
 int main() {
 	string sepratation = " \n --------------------------------------------------------------- \n";
 	cout << "Tableau initial" << endl;
