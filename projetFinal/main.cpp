@@ -53,10 +53,44 @@ Roi::Roi(string nature, string couleur) : piece(nature, couleur) {
 }
 //]
 
+// Implémentations relatives aux équipes
+//[
+Equipe::Equipe() {
+	string nom_ = "Equipe vide";
+	string couleur_ = "Aucune";
+};
+Equipe::Equipe(std::string nom, std::string couleur) {
+	string nom_ = nom;
+	string couleur_ = couleur;
+};
+void Equipe::ajouterMembre(pair<int, int> nouvellesCoordonnees) {
+	bool dejaPresent = false;
+	for (int i = 0; i < nMembres_; i++)
+	{
+		if (listeDesCasesMembres_[i] == nouvellesCoordonnees) {
+			dejaPresent = true;
+			break;
+		}
+	}
+	if(!dejaPresent)
+		listeDesCasesMembres_.push_back(nouvellesCoordonnees);
+};
+void Equipe::retirerMembre(const std::pair<int, int> coordonneesMembre) {
+	for (int i = 0; i < nMembres_; i++)
+	{
+		if (listeDesCasesMembres_[i] == coordonneesMembre)
+			listeDesCasesMembres_.erase(listeDesCasesMembres_.begin() + i); // Supprime le membre de la liste
+	}
+};
+//]
 
 //Constructeur de l'echiquier
 Echiquier::Echiquier() {
 	// Quand on crée l'échiquier, on veut que les cases soient vides initialement 
+	Equipe equipe1("Equipe noire", "Noir");
+	Equipe equipe2("Equipe blanche", "Blanc");
+	equipes_[0] = equipe1;
+	equipes_[1] = equipe2;
 	for (int i = 0; i < 8; i++) // Parcours les lignes de l'échiquier
 	{
 		for (int j = 0; j < 8; j++) // Parcours les colonnes de l'échiquier

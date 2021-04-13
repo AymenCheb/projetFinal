@@ -23,10 +23,22 @@ public:
 	friend class Echiquier;
 };
 
-
+class Equipe {
+private:
+	std::string nom_;
+	std::string couleur_;
+	std::vector<std::pair<int, int>> listeDesCasesMembres_;
+	int nMembres_ = 0;
+public:
+	Equipe();
+	Equipe(std::string nom, std::string couleur);
+	void ajouterMembre(const std::pair<int, int> nouvellesCoordonnees);
+	void retirerMembre(const std::pair<int, int> coordonneesMembre);
+};
 class Echiquier {
 private:
 	std::shared_ptr<piece> tableau_[8][8]; // Géneration d'un échiquier de 8x8 
+	Equipe equipes_[2];
 public:
 	Echiquier();
 	template <class TypePiece>
@@ -36,6 +48,10 @@ public:
 	bool verifierLegaliteMouvement(const std::vector<std::pair<int, int>>, const std::pair<int, int> destination, std::string couleurPiece);
 	void afficherEchiquier();
 	void afficherInfosCase(std::pair<int,int> coordonnees);
+	// Fonction pour déterminer à quelle équipe une case appartient 
+	bool determinerEquipe(std::pair<int, int> coordonnees);
+	// Fonction pour modifier les équipes:
+	void attribuerEquipe(std::pair<int, int> coordonnes);
 	
 	
 };
