@@ -8,7 +8,7 @@ using namespace std;
 /**
 * Programme qui implément un jeu d'échecs
 * \file   main.cpp
-* \author Chebbi Mohamed Aymen, Jaafar Hady, ... Arthur
+* \author Chebbi Mohamed Aymen, Jaafar Hady, Panoyan Arthur
 * \date   12 avril 2021
 * Créé le 08 avril 2021
 */
