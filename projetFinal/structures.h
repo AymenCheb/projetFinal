@@ -4,7 +4,6 @@
 #include <iostream>
 #include <vector>
 #include <memory>
-using namespace std;
 
 class deplacable{
 	virtual void afficher() = 0;
@@ -31,7 +30,7 @@ private:
 public:
 	Echiquier();
 	template <class TypePiece>
-	void modifierCase(const std::pair<int, int> coordonnees, const shared_ptr<TypePiece>* remplacement);
+	void modifierCase(const std::pair<int, int> coordonnees, const std::shared_ptr<TypePiece>* remplacement);
 	void viderCase(const std::pair<int, int> coordonnees);
 	void deplacerPiece(const std::pair<int, int> coordonneesInitiales, const std::pair<int, int> coordonneesDestination);
 	bool verifierLegaliteMouvement(const std::vector<std::pair<int, int>>, const std::pair<int, int> destination, std::string couleurPiece);
@@ -44,8 +43,7 @@ public:
 class Tour : public piece {
 private:
 public:
-	Tour(string nature, string couleur);
-	/*void afficher() override;*/
+	Tour(std::string nature, std::string couleur);
 	std::vector<std::pair<int, int>> trouverChemin(const std::pair<int, int> depart, const std::pair<int, int> destination) override;
 	bool demanderMouvement(const std::pair<int, int> depart, const std::pair<int, int> destination) override;
 };
@@ -54,8 +52,7 @@ public:
 class Cavalier : public piece {
 private:
 public:
-	Cavalier(string nature, string couleur);
-	/*void afficher() override;*/
+	Cavalier(std::string nature, std::string couleur);
 	std::vector<std::pair<int, int>> trouverChemin(const std::pair<int, int> depart, const std::pair<int, int> destination) override;
 	bool demanderMouvement(const std::pair<int, int> depart, const std::pair<int, int> destination) override;
 };
@@ -65,7 +62,7 @@ public:
 class Roi :public piece {
 private:
 public:
-	Roi(string nature, string couleur);
+	Roi(std::string nature, std::string couleur);
 	std::vector<std::pair<int, int>>trouverChemin(const std::pair<int, int> depart, const std::pair<int, int> destination) override;
 	bool demanderMouvement(const std::pair<int, int> depart, const std::pair<int, int> destination) override;
 };
