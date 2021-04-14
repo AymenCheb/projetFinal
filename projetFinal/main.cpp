@@ -55,25 +55,14 @@ Roi::Roi(string nature, string couleur) : piece(nature, couleur) {
 
 // Implémentations relatives aux équipes
 //[
-Equipe::Equipe() {
-	string nom_ = "Equipe vide";
-	string couleur_ = "Aucune";
-};
-Equipe::Equipe(std::string nom, std::string couleur) {
+Equipe::Equipe(const std::string nom, const std::string couleur) {
 	string nom_ = nom;
 	string couleur_ = couleur;
 };
 void Equipe::ajouterMembre(pair<int, int> nouvellesCoordonnees) {
-	bool dejaPresent = false;
-	for (int i = 0; i < nMembres_; i++)
-	{
-		if (listeDesCasesMembres_[i] == nouvellesCoordonnees) {
-			dejaPresent = true;
-			break;
-		}
-	}
-	if(!dejaPresent)
-		listeDesCasesMembres_.push_back(nouvellesCoordonnees);
+	
+	if (!verifierPresenceMembre(nouvellesCoordonnees));
+		listeDesCasesMembres_.push_back(nouvellesCoordonnees); // Ajoute le membre à la liste si il n'y est pas déjà
 };
 void Equipe::retirerMembre(const std::pair<int, int> coordonneesMembre) {
 	for (int i = 0; i < nMembres_; i++)
@@ -82,15 +71,39 @@ void Equipe::retirerMembre(const std::pair<int, int> coordonneesMembre) {
 			listeDesCasesMembres_.erase(listeDesCasesMembres_.begin() + i); // Supprime le membre de la liste
 	}
 };
+bool Equipe::verifierPresenceMembre(std::pair<int, int> coordonnees) {
+	for (int i = 0; i < nMembres_; i++)
+	{
+		if (listeDesCasesMembres_[i] == coordonnees)
+			return true;
+	}
+	return false;
+}
+// Cette fonction retourne un int pour indiquer à quelle équipe appartient une piece 
+int Echiquier::determinerEquipe(std::pair<int, int> coordonnees) {
+	if (equipes_[0].verifierPresenceMembre(coordonnees))
+		return 0;
+	if (equipes_[1].verifierPresenceMembre(coordonnees))
+		return 1;
+	else return 2;
+};
+// Cette fonction attribu correctement une equipe a une case en fonction de sa couleur
+void Echiquier::attribuerEquipe(std::pair<int, int> coordonnes) {
+	string couleurPiece = tableau_[coordonnes.first][coordonnes.second].get()->couleur_;
+	if (couleurPiece == equipes_[0].couleur_)
+		equipes_[0].ajouterMembre(coordonnes);
+	else if (couleurPiece == equipes_[1].couleur_)
+		equipes_[1].ajouterMembre(coordonnes);
+	else cout << "La case n'a pas la meme couleur d'une des equipes" << endl;
+}
 //]
 
 //Constructeur de l'echiquier
-Echiquier::Echiquier() {
+Echiquier::Echiquier(Equipe equipe1, Equipe equipe2) {
 	// Quand on crée l'échiquier, on veut que les cases soient vides initialement 
-	Equipe equipe1("Equipe noire", "Noir");
-	Equipe equipe2("Equipe blanche", "Blanc");
-	equipes_[0] = equipe1;
-	equipes_[1] = equipe2;
+	Equipe equipe("Equipe noire", "Noir");
+	equipes_[0].nom_ = equipe1.nom_;
+	equipes_[0].couleur_ = equipe1.couleur_;
 	for (int i = 0; i < 8; i++) // Parcours les lignes de l'échiquier
 	{
 		for (int j = 0; j < 8; j++) // Parcours les colonnes de l'échiquier
@@ -106,12 +119,27 @@ Echiquier::Echiquier() {
 //Cette methode permet de modifier une case precise de l'echiquier, en passant en parametre les coordonnees de la case, ainsi que la piece que l'on souhaite placer a cette case
 template <class TypePiece>
 void Echiquier::modifierCase(const std::pair<int, int> coordonnees, const shared_ptr<TypePiece>* remplacement) {
+	// On vide la case par précaution pour éviter des oublis au niveau de la gestion d'équipes
+	viderCase(coordonnees);
 	// L'usage du template TypePiece permet d'éviter l'object slicing 
 	tableau_[coordonnees.first][coordonnees.second] = *remplacement;
+	// On réattribue une équipe à la pièce en fonction de sa nouvelle couleur
+	attribuerEquipe(coordonnees);
 }
 
 //Cette methode permet de vider une case, en y inserant une Piece ( directement de la classe Piece, cette Piece n'est ni une tour, ni un fou etc..)
 void Echiquier::viderCase(const std::pair<int, int> coordonnees) {
+	int indexEquipe = determinerEquipe(coordonnees);
+	// Ce switch s'occupe de retirer la case de l'équipe qui lui correspond
+	switch (indexEquipe)
+	{
+	case 0:
+	case 1:
+		equipes_[indexEquipe].retirerMembre(coordonnees);
+		break;
+	case 2: // Si la piece n'est dans aucune equipe, on peut juste passer
+		break;
+	}
 	tableau_[coordonnees.first][coordonnees.second] = make_shared<piece>(); // Pour vider une case, on place une nouvelle piece X dans le tableau à son endroit
 }
 //Methode pour afficher l'echiquier dans le terminal
@@ -125,7 +153,15 @@ void Echiquier::afficherEchiquier() {
 		cout << '\n'; // 
 	}
 }
-
+void Echiquier::afficherMembresEquipe(string nom) {
+	if (equipes_[0].nom_ == nom)
+	{
+		for (int i = 0; i < equipes_[0].nMembres_; i++) {
+			pair<int, int> coordonneesMembre = equipes_[0].listeDesCasesMembres_[i];
+			afficherInfosCase(coordonneesMembre);
+		}
+	}
+}
 // Methode permettant de deplacer une piece, on donne en parametres les coordonnees initiales de la piece ainsi que les coordonnees de destination
 void Echiquier::deplacerPiece(const std::pair<int, int> coordonneesInitiales, const std::pair<int, int> coordonneesDestination) {
 	// Demande à la pièce de vérifier si le mouvement demander est possible
@@ -428,6 +464,10 @@ int main() {
 	nouvelleCoordonnees.second = 4;
 	cout << "On demande l'affichage de la case aux coordonnees:\n" << nouvelleCoordonnees.first << ',' << nouvelleCoordonnees.second << endl;
 	echiquier.afficherInfosCase(nouvelleCoordonnees);
+	cout << "On demande l'affichage des membres des deux équipes: " << endl;
+	cout << '\n';
+	echiquier.afficherMembresEquipe("Equipe noire");
+	echiquier.afficherMembresEquipe("Equipe blanche");
 	cout << sepratation;
 	cout << '\n';
 	return 1;

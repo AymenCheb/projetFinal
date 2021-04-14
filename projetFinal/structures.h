@@ -25,22 +25,23 @@ public:
 
 class Equipe {
 private:
-	std::string nom_;
-	std::string couleur_;
+	std::string nom_ = "Equipe vide";
+	std::string couleur_ = "Aucune";
 	std::vector<std::pair<int, int>> listeDesCasesMembres_;
 	int nMembres_ = 0;
 public:
-	Equipe();
-	Equipe(std::string nom, std::string couleur);
+	Equipe(const std::string nom = "Equipe vide", const std::string couleur = "Aucune");
 	void ajouterMembre(const std::pair<int, int> nouvellesCoordonnees);
 	void retirerMembre(const std::pair<int, int> coordonneesMembre);
+	bool verifierPresenceMembre(std::pair<int, int> coordonnees);
+	friend class Echiquier;
 };
 class Echiquier {
 private:
 	std::shared_ptr<piece> tableau_[8][8]; // Géneration d'un échiquier de 8x8 
 	Equipe equipes_[2];
 public:
-	Echiquier();
+	Echiquier(Equipe equipe1 = Equipe("Equipe noire", "Noir"), Equipe equipe2 = Equipe("Equipe blanche", "Blanc"));
 	template <class TypePiece>
 	void modifierCase(const std::pair<int, int> coordonnees, const std::shared_ptr<TypePiece>* remplacement);
 	void viderCase(const std::pair<int, int> coordonnees);
@@ -49,10 +50,11 @@ public:
 	void afficherEchiquier();
 	void afficherInfosCase(std::pair<int,int> coordonnees);
 	// Fonction pour déterminer à quelle équipe une case appartient 
-	bool determinerEquipe(std::pair<int, int> coordonnees);
+	int determinerEquipe(std::pair<int, int> coordonnees);
 	// Fonction pour modifier les équipes:
 	void attribuerEquipe(std::pair<int, int> coordonnes);
-	
+	// Fonction pour afficher les membres d'une équipe
+	void afficherMembresEquipe(std::string nom);
 	
 };
 
