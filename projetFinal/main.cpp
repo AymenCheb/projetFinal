@@ -56,19 +56,23 @@ Roi::Roi(string nature, string couleur) : piece(nature, couleur) {
 // Implémentations relatives aux équipes
 //[
 Equipe::Equipe(const std::string nom, const std::string couleur) {
-	string nom_ = nom;
-	string couleur_ = couleur;
+	nom_ = nom;
+	couleur_ = couleur;
 };
 void Equipe::ajouterMembre(pair<int, int> nouvellesCoordonnees) {
 	
-	if (!verifierPresenceMembre(nouvellesCoordonnees));
+	if (!verifierPresenceMembre(nouvellesCoordonnees)); {
 		listeDesCasesMembres_.push_back(nouvellesCoordonnees); // Ajoute le membre à la liste si il n'y est pas déjà
+		nMembres_++;
+	}
 };
 void Equipe::retirerMembre(const std::pair<int, int> coordonneesMembre) {
 	for (int i = 0; i < nMembres_; i++)
 	{
-		if (listeDesCasesMembres_[i] == coordonneesMembre)
+		if (listeDesCasesMembres_[i] == coordonneesMembre) {
 			listeDesCasesMembres_.erase(listeDesCasesMembres_.begin() + i); // Supprime le membre de la liste
+			nMembres_--;
+		}
 	}
 };
 bool Equipe::verifierPresenceMembre(std::pair<int, int> coordonnees) {
@@ -101,9 +105,8 @@ void Echiquier::attribuerEquipe(std::pair<int, int> coordonnes) {
 //Constructeur de l'echiquier
 Echiquier::Echiquier(Equipe equipe1, Equipe equipe2) {
 	// Quand on crée l'échiquier, on veut que les cases soient vides initialement 
-	Equipe equipe("Equipe noire", "Noir");
-	equipes_[0].nom_ = equipe1.nom_;
-	equipes_[0].couleur_ = equipe1.couleur_;
+	equipes_[0] = equipe1;
+	equipes_[1] = equipe2;
 	for (int i = 0; i < 8; i++) // Parcours les lignes de l'échiquier
 	{
 		for (int j = 0; j < 8; j++) // Parcours les colonnes de l'échiquier
@@ -351,7 +354,7 @@ int main() {
 
 	// Creation d'une tour et test de deplacements
 	//Creation de la tour et positionnement de la tour aux coordonnees
-	Tour nouvellePiece("T", "noir");
+	Tour nouvellePiece("T", "Noir");
 	shared_ptr<Tour> pointeurTour = make_shared<Tour>(nouvellePiece);
 	cout << "On demande la modification de la case (5,4) en une tour: " << endl;
 	cout << '\n';
@@ -379,7 +382,7 @@ int main() {
 
 	//Creation d'un cavalier et test de deplacements
 	//Creation du cavalier et positionnement
-	Cavalier premierCavalier("C", "noir");
+	Cavalier premierCavalier("C", "Noir");
 	shared_ptr<Cavalier> pointeurCavalier = make_shared<Cavalier>(premierCavalier);
 	pair<int, int> coordonneesCavalier(5, 4);
 	echiquier.modifierCase(coordonneesCavalier, &pointeurCavalier);
@@ -409,7 +412,7 @@ int main() {
 
 	//Creation d'un roi et test de deplacements
 	//Creation du roi et positionnement
-	Roi premierRoi("R", "noir");
+	Roi premierRoi("R", "Noir");
 	shared_ptr<Roi> pointeurRoi = make_shared<Roi>(premierRoi);
 	pair<int, int> coordonneesRoi(2, 4);
 	echiquier.modifierCase(coordonneesRoi, &pointeurRoi);
