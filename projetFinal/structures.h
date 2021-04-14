@@ -55,7 +55,9 @@ public:
 	void attribuerEquipe(std::pair<int, int> coordonnes);
 	// Fonction pour afficher les membres d'une équipe
 	void afficherMembresEquipe(std::string nom);
-	
+	// Verifier la condition d'échec
+	bool verifierEchec(std::pair<int,int> positionRoi);
+	bool validerMouvement(const std::pair<int, int> coordonneesInitiales, const std::pair<int, int> coordonneesDestination);
 };
 
 class Tour : public piece {

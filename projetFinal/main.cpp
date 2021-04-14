@@ -100,6 +100,31 @@ void Echiquier::attribuerEquipe(std::pair<int, int> coordonnes) {
 		equipes_[1].ajouterMembre(coordonnes);
 	else cout << "La case n'a pas la meme couleur d'une des equipes" << endl;
 }
+bool Echiquier::verifierEchec(pair<int,int> positionRoi) {
+	// Ajouter des tests pour vérifier que l'on passe bien un roi 
+	int indexEquipe = determinerEquipe(positionRoi);
+	// Ce switch s'occupe de retirer la case de l'équipe qui lui correspond
+	switch (indexEquipe)
+	{
+	case 0:
+		for (int i = 0; i < equipes_[1].nMembres_; i++)
+		{
+			if (validerMouvement(equipes_[1].listeDesCasesMembres_[i], positionRoi))
+				return true;
+		}
+		break;
+	case 1:
+		for (int i = 0; i < equipes_[0].nMembres_; i++)
+		{
+			if (validerMouvement(equipes_[0].listeDesCasesMembres_[i], positionRoi))
+				return true;
+		}
+		break;
+	case 2: // Si la piece n'est dans aucune equipe, on peut juste passer
+		break;
+	}
+	return false;
+}
 //]
 
 //Constructeur de l'echiquier
@@ -165,8 +190,7 @@ void Echiquier::afficherMembresEquipe(string nom) {
 		}
 	}
 }
-// Methode permettant de deplacer une piece, on donne en parametres les coordonnees initiales de la piece ainsi que les coordonnees de destination
-void Echiquier::deplacerPiece(const std::pair<int, int> coordonneesInitiales, const std::pair<int, int> coordonneesDestination) {
+bool Echiquier::validerMouvement(const std::pair<int, int> coordonneesInitiales, const std::pair<int, int> coordonneesDestination) {
 	// Demande à la pièce de vérifier si le mouvement demander est possible
 	bool mouvementPossible = tableau_[coordonneesInitiales.first][coordonneesInitiales.second].get()->demanderMouvement(coordonneesInitiales, coordonneesDestination);
 	if (mouvementPossible)
@@ -175,11 +199,15 @@ void Echiquier::deplacerPiece(const std::pair<int, int> coordonneesInitiales, co
 		std::vector<std::pair<int, int>> chemin = tableau_[coordonneesInitiales.first][coordonneesInitiales.second].get()->trouverChemin(coordonneesInitiales, coordonneesDestination);
 		// On vérifie que le mouvement ne brise aucune règle de jeu
 		bool mouvementLegal = verifierLegaliteMouvement(chemin, coordonneesDestination, tableau_[coordonneesInitiales.first][coordonneesInitiales.second].get()->couleur_);
-		if (mouvementLegal) {
+		return mouvementLegal;
+	}
+	return false;
+}
+// Methode permettant de deplacer une piece, on donne en parametres les coordonnees initiales de la piece ainsi que les coordonnees de destination
+void Echiquier::deplacerPiece(const std::pair<int, int> coordonneesInitiales, const std::pair<int, int> coordonneesDestination) {
+	if (validerMouvement(coordonneesInitiales, coordonneesDestination)) {
 			// Si le mouvement est légal, on modifie la case de destination et on vide la case de départ
 			modifierCase(coordonneesDestination, &tableau_[coordonneesInitiales.first][coordonneesInitiales.second]);
-			viderCase(coordonneesInitiales);
-		}
 	}
 	else cout << "Mouvement impossible " << endl;
 }
