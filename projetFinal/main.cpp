@@ -13,7 +13,8 @@
 using namespace std;
 
 int main() {
-	cout << "On commence les tests: " << '\n' << "Tests livrable 1: " << endl;
-	testPartie1();
+	/*cout << "On commence les tests: " << '\n' << "Tests livrable 1: " << endl;
+	testPartie1();*/
+	testPartie2();
 	return 1;
 }

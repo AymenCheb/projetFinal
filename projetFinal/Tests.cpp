@@ -171,9 +171,30 @@ void testPartie1() {
 	cout << '\n';
 }
 
-void testPatie2() {
+void testPartie2() {
 	Echiquier echiquier;
+	Roi roiNoir("R", "Noir");
+	Roi roiBlanc("R", "Blanc");
+	Tour tourBlanche("T", "Blanc");
+	Tour tourNoir("T", "Noir");
+	shared_ptr<Roi> pointeurRoiNoir = make_shared<Roi>(roiNoir);
+	shared_ptr<Roi> pointeurRoiBlanc = make_shared<Roi>(roiBlanc);
+	shared_ptr<Tour> pointeurTourBlanche = make_shared<Tour>(tourBlanche);
+	shared_ptr<Tour> pointeurTourNoir = make_shared<Tour>(tourNoir);
+
+	pair<int, int> crdRoiNoir(0, 0), crdTourNoir(0, 1), crdTourBlance(0, 2);
 	// Test de la vérification de la mise en échecs: 
+	echiquier.modifierCase(crdRoiNoir, &pointeurRoiNoir);
+	echiquier.modifierCase(crdTourBlance, &pointeurTourBlanche);
+	echiquier.modifierCase(crdTourNoir, &pointeurTourNoir);
+
+	echiquier.afficherEchiquier();
+	cout << '\n';
+	pair<int, int> crdTN(1, 1);
+	echiquier.afficherInfosCase(crdTN);
+	echiquier.deplacerPiece(crdTourNoir, crdTN);
+	echiquier.afficherEchiquier();
+
 }
 
 

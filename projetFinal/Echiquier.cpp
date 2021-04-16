@@ -127,20 +127,22 @@ bool Echiquier::validerMouvement(const std::pair<int, int> coordonneesInitiales,
 // Methode permettant de deplacer une piece, on donne en parametres les coordonnees initiales de la piece ainsi que les coordonnees de destination
 void Echiquier::deplacerPiece(const std::pair<int, int> coordonneesInitiales, const std::pair<int, int> coordonneesDestination) {
 	// On mémorise les pointeurs des pieces aux cases de départ et de destination
-	shared_ptr<piece>* pieceDestination = &tableau_[coordonneesDestination.first][coordonneesDestination.second];
-	shared_ptr<piece>* pieceDepart = &tableau_[coordonneesInitiales.first][coordonneesInitiales.second];
+	afficherInfosCase(coordonneesDestination);
+	memoriserPieceDepart(&tableau_[coordonneesInitiales.first][coordonneesInitiales.second]);
+	memoriserPieceDestination(&tableau_[coordonneesDestination.first][coordonneesDestination.second]);
 
 	// Dans un premier temps, on vérifie que la pièce a le droit d'effectuer ce mouvement
 	if (validerMouvement(coordonneesInitiales, coordonneesDestination)) {
 		// Si le mouvement est légal, on modifie la case de destination et on vide la case de départ
-		modifierCase(coordonneesDestination, pieceDepart);
+		modifierCase(coordonneesDestination, &tableau_[coordonneesInitiales.first][coordonneesInitiales.second]);
+		viderCase(coordonneesInitiales);
 		// Dans un deuxième temps, on vérifie si ce déplacement a mis le roi de la pièce en échec
-		if (verifierEchec(trouverPiece("R", pieceDepart->get()->nature_)))
+		if (verifierEchec(trouverPiece("R", pieceDepart_.get()->couleur_)))
 		{
 			// Si oui, on annule le déplacement
-			modifierCase(coordonneesDestination, pieceDestination);
-			modifierCase(coordonneesInitiales, pieceDepart);
-			cout << "Ce mouvement mettrait le roi de la " << pieceDepart->get()->nature_ << " en echec! " << endl;
+			modifierCase(coordonneesDestination, &pieceDestination_);
+			modifierCase(coordonneesInitiales, &pieceDepart_);
+			cout << "Ce mouvement mettrait le roi de la " << pieceDepart_.get()->nature_ << " en echec! " << endl;
 		}
 	}
 	else cout << "Mouvement impossible " << endl;

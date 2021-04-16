@@ -13,6 +13,8 @@
 
 class Echiquier {
 private:
+	std::shared_ptr<piece> pieceDepart_;
+	std::shared_ptr<piece> pieceDestination_;
 	std::shared_ptr<piece> tableau_[8][8]; // Géneration d'un échiquier de 8x8 
 	Equipe equipes_[2];
 public:
@@ -43,6 +45,15 @@ public:
 	bool verifierEchec(std::pair<int,int> positionRoi);
 	bool validerMouvement(const std::pair<int, int> coordonneesInitiales, const std::pair<int, int> coordonneesDestination);
 	std::pair<int, int> trouverPiece(std::string nature, std::string couleur);
+	template <class TypePiece>
+	void memoriserPieceDepart(std::shared_ptr<TypePiece>* ptrPieceDepart) {
+		pieceDepart_ = std::make_shared<TypePiece>(*ptrPieceDepart->get());
+	}
+	template <class TypePiece>
+	void memoriserPieceDestination(std::shared_ptr<TypePiece>* ptrPieceDestination) {
+		pieceDestination_ = std::make_shared<TypePiece>(*ptrPieceDestination->get());
+	}
+
 };
 
 
